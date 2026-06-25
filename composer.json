@@ -1,0 +1,24 @@
+{
+    "name": "core/bin",
+    "description": "ia",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "Controllers\\": "controller/",
+            "Src\\": "src/",
+            "model\\": "model/"
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "theodo-group/llphant": "^0.11",
+        "symfony/http-client": "^7.2",
+        "nyholm/psr7": "^1.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
