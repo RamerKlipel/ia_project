@@ -8,9 +8,9 @@ class database {
     {
         if (self::$PDO == null) {
             try {
-                $conn = getenv("DB_DRIVER") .':host='. getenv("DB_HOST") . ";port=" . getenv("DB_PORT") .';dbname='. getenv("DB_NAME");
-                $password = trim(getenv("DB_PW"));
-                $user = trim(getenv("DB_USER"));
+                $conn = getenv("DB_DRIVER") .':host='. getenv("DB_HOST") . ";port=" . getenv("DB_PORT") .';dbname='. getenv("DB_DATABASE");
+                $password = trim(getenv("DB_PASSWORD"));
+                $user = trim(getenv("DB_USERNAME"));
                 self::$PDO = new \PDO($conn, $user, $password, OPTIONS_PDO);
             } catch (\PDOException $e) {
                 echo 'erro ao conectar ao banco de dados: ' .$e->getMessage(). ' arquivo: ' .$e->getFile(). ' linha: ' .$e->getLine(). ' Código do erro: ', $e->getCode();die;

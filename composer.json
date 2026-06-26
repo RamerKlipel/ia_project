@@ -13,8 +13,9 @@
     "require": {
         "php": "^8.2",
         "theodo-group/llphant": "^0.11",
-        "symfony/http-client": "^7.2",
-        "nyholm/psr7": "^1.8"
+        "symfony/http-client": "7.2",
+        "nyholm/psr7": "^1.8",
+        "nikic/php-parser": "^5.7"
     },
     "config": {
         "allow-plugins": {

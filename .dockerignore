@@ -1,0 +1,7 @@
+control.php
+php.ini
+.git
+.env
+vendor/
+*.log
+.vscode/

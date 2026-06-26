@@ -3,3 +3,5 @@ LICENSE
 vault-embeddings.json
 php.ini
 vendor/
+.bak
+.env
