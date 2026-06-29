@@ -9,6 +9,7 @@ use LLPhant\OllamaConfig;
 
 $embeddingConfig = new OllamaConfig();
 $embeddingConfig->model = 'nomic-embed-text';
+$embeddingConfig->url = 'http://ollama:11434/api';
 
 // $chatConfig = new OllamaConfig();
 // $chatConfig->model = 'qwen2.5-coder:7b';

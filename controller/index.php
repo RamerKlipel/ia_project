@@ -9,6 +9,4 @@ class index extends core {
         parent::__construct('Home');
         callViewFrom("emptyindex");
     }
-
-    public function render() {}
 }
