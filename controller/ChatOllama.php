@@ -31,26 +31,37 @@ class ChatOllama extends Core {
 
     private function createChat(): void
     {
-        $embeddingConfig = new OllamaConfig();
-        $embeddingConfig->model = 'nomic-embed-text';
+        try {
+            if (!$this->verifyModelIsActive("nomic-embed-text") || !$this->verifyModelIsActive("qwen2.5-coder:3b")) {
+                throw new \Exception("Modelo de llm não encontrado", 500);
+            }
 
-        $chatConfig = new OllamaConfig();
-        $chatConfig->model = 'qwen2.5-coder:3b';
-        // $chatConfig->model = 'qwen2.5-coder:7b';
+            $embeddingConfig = new OllamaConfig();
+            $embeddingConfig->url = "http://ollama:11434/api/";
+            $embeddingConfig->model = 'nomic-embed-text';
 
-        $vectorStore = new FileSystemVectorStore('vault-embeddings.json');
+            $chatConfig = new OllamaConfig();
+            $chatConfig->url = "http://ollama:11434/api/";
+            $chatConfig->model = 'qwen2.5-coder:3b';
+            // $chatConfig->model = 'qwen2.5-coder:7b';
 
-        $embeddingGenerator = new OllamaEmbeddingGenerator($embeddingConfig);
+            $vectorStore = new FileSystemVectorStore('vault-embeddings.json');
 
-        $chat = new OllamaChat($chatConfig);
+            $embeddingGenerator = new OllamaEmbeddingGenerator($embeddingConfig);
 
-        $chat->setSystemMessage(
-            "Você é um assistente especializado no framework PHP interno da empresa.
-            Responda apenas com base na documentação fornecida.
-            Se a resposta não estiver na documentação, diga explicitamente que não sabe.
-            Responda sempre em português.");
+            $chat = new OllamaChat($chatConfig);
 
-        $this->questionAwnsering = new QuestionAnswering($vectorStore, $embeddingGenerator, $chat);
+            $chat->setSystemMessage(
+                "Você é um assistente especializado no framework PHP interno da empresa.
+                Responda apenas com base na documentação fornecida.
+                Se a resposta não estiver na documentação, diga explicitamente que não sabe.
+                Responda sempre em português.");
+
+            $this->questionAwnsering = new QuestionAnswering($vectorStore, $embeddingGenerator, $chat);
+        } catch (\Exception $e) {
+            http_response_code($e->getCode() ?? 500);
+            throw $e;
+        }
     }
 
     public function askChatOllama()
@@ -89,5 +100,46 @@ class ChatOllama extends Core {
         Session::set('ARRCHATHISTORY', $this->messages);
     }
 
-    public function render() {}
+    private function verifyModelIsActive(string $model, string $baseUrl = "http://ollama:11434"): bool
+    {
+        $arrModelsAvailable = [];
+        $url = trim($baseUrl, "/") . "/api/tags";
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, $url);
+
+        $jsonModels = curl_exec($ch);
+        $httpsResponseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($jsonModels === false || $httpsResponseCode != 200) {
+            return false;
+        }
+
+        $arrModels = json_decode($jsonModels, true);
+
+        if (!isset($arrModels["models"]) || !is_array($arrModels["models"])) {
+            return false;
+        }
+
+        foreach($arrModels["models"] as $arrModel) {
+            $arrModelsAvailable[] = ($arrModel["name"] ?? null);
+        }
+
+        $arrModelsAvailable = array_filter($arrModelsAvailable);
+
+        if (empty($arrModelsAvailable)) {
+            return false;
+        }
+
+        $isModelAvailable = false;
+        foreach($arrModelsAvailable as $modelAvailable) {
+            if (str_starts_with($modelAvailable, $model)) {
+                $isModelAvailable = true;
+            }
+        }
+
+        return $isModelAvailable;
+    }
 }

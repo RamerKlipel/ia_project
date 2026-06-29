@@ -1,7 +1,7 @@
 <?php
 use Core\html;
 ?>
-<link rel="stylesheet" href="./public/css/error.css">
+<link rel="stylesheet" href="/css/error.css">
 <link rel="icon" href="data:,">
 
 <div id="full-error-screen" class="error-overlay">

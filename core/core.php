@@ -26,10 +26,6 @@ abstract class core
         $this->setModel($arrUrl['CLASS'] ?? "");
         Session::start();
         $this->setSqlTable($sqlTable);
-
-        if (empty($arrUrl['METHOD'])) {
-            $this->main();
-        }
     }
 
     protected function setSql(string $sql): void
@@ -112,7 +108,7 @@ abstract class core
         foreach ($attrScrpit as $key => $val) {
             $arrAttrScript[] = " $key=\"$val\"";
         }
-        $this->arrJs[] = "<script " . implode(" ", $arrAttrScript) . " src=\"./public/js/$js.js\"></script>";
+        $this->arrJs[] = "<script " . implode(" ", $arrAttrScript) . " src=\"/js/$js.js\"></script>";
     }
 
     protected function addCss(string $css): void
